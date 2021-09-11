@@ -114,7 +114,8 @@ void loop()
     }
     if (bitRead(pause, 1)) {
       lcd.setCursor(3, row);
-      lcd.print("TEMP ERROR");
+      lcd.print("TEMP ERROR ");
+      lcd.print(Tc);
       row++;
     }
     delay(1000);
