@@ -73,11 +73,19 @@ void loop()
   Serial.print(flowRate);
   Serial.print("\n");
 
+  int pause = 0;
+  if (flowRate < 0.5) {
+    bitSet(pause, 0);
+  }
+  if (Tc > 23) {
+    bitSet(pause, 1);
+  }
+
 
   // clear the lcd so we can write new info
   lcd.clear();
 
-  if (flowRate >= 0.5){                               // turns off the relay when "flowRate" is under 0.5L/min and opens the laser switch
+  if (pause == 0){                               // turns off the relay when "flowRate" is under 0.5L/min and opens the laser switch
     digitalWrite(Relay, HIGH);  
   
     lcd.print("Temp:");
@@ -98,8 +106,17 @@ void loop()
   else {
     digitalWrite(Relay, LOW);
     lcd.clear();
-    lcd.setCursor(3, 0);
-    lcd.print("PUMP ERROR");
+    int row = 0;
+    if (bitRead(pause, 0)) {
+      lcd.setCursor(3, row);
+      lcd.print("PUMP ERROR");
+      row++;
+    }
+    if (bitRead(pause, 1)) {
+      lcd.setCursor(3, row);
+      lcd.print("TEMP ERROR");
+      row++;
+    }
     delay(1000);
   }
 }
