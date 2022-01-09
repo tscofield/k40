@@ -8,7 +8,7 @@
 #include<math.h>                                      //math for converting the thermistor data
 #include "Wire.h"
 #include <LiquidCrystal_I2C.h>
-#include <Adafruit_Sensor.h>
+//#include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
 
 // define device I2C address: 0x76 or 0x77 (0x77 is library default address)
@@ -46,7 +46,7 @@ float TWarn[ThermisterCount] = {18,18,18};
 // Base temprature, below this we assume the probe has failed
 // Set to -274 or lower to disable, since it can never be that cold
 // Something slightly below freezing should be sufficient
-float TBase[ThermisterCount] = {-5,-5,-275};
+float TBase[ThermisterCount] = {-5,-275,-275};
 
 // set initial error state for devices
 // 0 = good
@@ -204,11 +204,11 @@ void loop()
     TempC[i] = tempcalc(ThermistorPin[i]);
     int_TempC[i] = round(TempC[i]);
     if (TempC[i] < TBase[i]) {
-      TState[i] = 3;
-      Serial.print("Pausing laser, below base temp - laser #: ");
+      Serial.print("Pausing laser, below base temp - temp probe #: ");
       Serial.println(i);
       local_pause = 1;
       bitSet(laser_pause, 1);
+      TState[i] = -1;
     } else if (TempC[i] < TWarn[i]) {
       TState[i] = 0;
     } else if (TempC[i] < TCrit[i]) {
